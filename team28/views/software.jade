@@ -1,0 +1,41 @@
+extends layout
+head
+block bodyContent
+  script(src="javascripts/softwareScript.js")
+  h1=title
+  body
+    .container-fluid
+      .row
+        .col-md-12
+          .row
+            nav.navbar.navbar-expand-lg.navbar-light.tableOptions
+              ul.navbar-nav.ml-auto
+                li.nav-item
+                  select#searchFilter.form-control.form-control(onclick='searchSoftware()')
+                    option(value='0') Software ID
+                    option(value='1') Software Name
+                    option(value='2') Version
+                    option(value='3') License Number	
+                    option(value='4') License Expiry
+                li.nav-item
+                  form.form-inline.my-2.my-lg-0
+                    input#searchInput.form-control.ml-sm-2(type='search' placeholder='Search' aria-label='Search' onkeyup='searchSoftware()')
+
+      .row
+        .col-md-12
+            table#softwareDataTable.table.table-hover.shadow.p-3.mb-5.bg-white.rounded
+              thead
+                tr
+                  th Software ID
+                  th Software Name
+                  th Version
+                  th License Number
+                  th License Expiry
+              tbody
+                each row in softwareData
+                  tr.table-row
+                    td.softwareID #{row.SoftwareID}
+                    td.softwareName #{row.SoftwareName}
+                    td.version #{row.Version}
+                    td.licenseNo #{row.LicenceNumber}
+                    td.licenseExpiry #{row.LicenseExpiry}

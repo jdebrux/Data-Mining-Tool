@@ -1,0 +1,83 @@
+nav(id='sidebarMenu' class='sidebar collapse d-lg-block bg-blue')
+  img#logo(src='/images/logoTools.png', alt='picture of make-it-all logo')
+  hr
+  div#sidebarItemGroup(class='position-sticky list-group list-group-flush mx-3 mt-4')
+    - if (session.DeptID == 2){
+      a(href='faq' class='list-group-item list-group-item-action py-2 ripple')
+        i(class='fas fa-question fa-fw me-3')
+        span FAQ
+    -}
+
+    - if (session.DeptID == 2 || session.DeptID == 7 || session.DeptID == 9){
+      a(href='open-tickets' class='list-group-item list-group-item-action py-2 ripple')
+        i(class='fas fa-ticket fa-fw me-3')
+        span Open Tickets
+    -}
+
+    - if (session.DeptID == 7 || session.DeptID == 9){
+      a(href='hardware' class='list-group-item list-group-item-action py-2 ripple')
+        i(class='fas fa-microchip fa-fw me-3')
+        span Hardware Register
+    -}
+
+    - if (session.DeptID == 7 || session.DeptID == 9){
+      a(href='software' class='list-group-item list-group-item-action py-2 ripple')
+        i(class='fas fa-code fa-fw me-3')
+        span Software Register
+    -}
+
+    - if (session.DeptID == 7 || session.DeptID == 9){
+      a(href='current-problems' class='list-group-item list-group-item-action py-2 ripple')
+        i(class='fas fa-circle-exclamation fa-fw me-3')
+        span Current Problems 
+    -}
+
+    - if (session.DeptID == 8){
+      a(href='manage-users' class='list-group-item list-group-item-action py-2 ripple')
+        i(class='fas fa-users fa-fw me-3')
+        span Manage Users
+    -}
+
+    - if (session.DeptID == 8){
+      a(href='users-archive' class='list-group-item list-group-item-action py-2 ripple')
+        i(class='fas fa-box-archive fa-fw me-3')
+        span User Archive
+    -}
+
+    - if (session.DeptID == 8){
+      a(href='analytics' class='list-group-item list-group-item-action py-2 ripple')
+        i(class='fas fa-chart-line fa-fw me-3')
+        span Analytics
+    -}
+
+    a(href='#' class='list-group-item list-group-item-action py-2 ripple')
+      i(class='fas fa-user fa-fw me-3')
+      span #{session.firstname}
+
+    a(href='login' class='list-group-item list-group-item-action py-2 ripple')
+      i(class='fas fa-right-from-bracket fa-fw me-3')
+      span Log Out
+script. 
+  //- Assign an 'activePage' class to the current page to visually indicate on the sidebar.
+  const currentLocation = location.href;
+  const menuItem = document.querySelectorAll('a');
+  const menuLength = menuItem.length;
+  for (let i = 0; i<menuLength; i++){
+    if (menuItem[i].href == currentLocation){
+      menuItem[i].className += ' activePage';
+      menuItem[i].href = '#';
+    }
+  }
+
+
+
+
+
+
+
+//- Cannot access session variables here, must be passed to the page.
+//- - if (session.DeptID == 2){
+//-     a(href='#' class='list-group-item list-group-item-action py-2 ripple ')
+//-       i(class='fas fa-chart-area fa-fw me-3')
+//-       span Item 3
+//- -}

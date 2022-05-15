@@ -1,0 +1,15 @@
+extends layout 
+ 
+block bodyContent 
+  h1= title
+  p hello from the users-archive jade file.
+  p #{title}
+  div.alert.alert-primary.alert-dismissable(role='alert')
+    text Simple primary banner
+    button.btn-close#alertCloseButton(type='button', data-bs-dismiss='alert', aria-label='Close')
+  p #{session.DeptID}
+  p #{session.username}
+
+  -if (session.DeptID == 2){
+    p here
+  -}

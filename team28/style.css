@@ -1,0 +1,10 @@
+body {
+  height: 100vh;
+  background-color: white;
+  margin-left: 10%;
+  padding-left: 1%;
+}
+
+#alertCloseButton{
+  float: right;
+}

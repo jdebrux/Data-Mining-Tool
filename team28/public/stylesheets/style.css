@@ -1,0 +1,19 @@
+body {
+  height: 100vh;
+  background-color: white;
+  margin-left: 10%;
+  padding-left: 1%;
+}
+
+#alertCloseButton{
+  float: right;
+}
+
+.my-custom-scrollbar {
+  position: relative;
+  height: 30rem;
+  overflow: auto;
+  }
+  .table-wrapper-scroll-y {
+  display: block;
+  }

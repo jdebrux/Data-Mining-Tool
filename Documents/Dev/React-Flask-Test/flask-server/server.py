@@ -149,7 +149,7 @@ def randomForestTrain(df, target):
     acc = accuracy(y_test, predictions)
     print(acc)
     #return convert_to_recharts_format(X.flatten().tolist(), predictions.tolist())
-    return jsonify({"Actual":y_test.flatten().tolist(), "predictions": predictions.tolist(), "accuracy": acc})
+    return jsonify({"actual":y_test.flatten().tolist(), "predictions": predictions.tolist(), "accuracy": acc})
 
 # --------------------------- LOGISTIC REGRESSION ---------------------------#
 
@@ -179,7 +179,8 @@ def logisticRegressionTrain(df, target):
         return np.sum(y_pred == y_test) / len(y_test)
 
     acc = accuracy(y_pred, y_test)
-    return jsonify({"predictions": y_pred, "accuracy": acc})
+    # return jsonify({"predictions": y_pred, "accuracy": acc})
+    return jsonify({"actual":y_test.flatten().tolist(), "predictions": y_pred, "accuracy": acc})
 
 # --------------------------- KNN ---------------------------#
 
@@ -214,6 +215,7 @@ def KNNTrain(df, target):
 
     # Return response
     return jsonify({"predictions": predictions, "accuracy": acc})
+    
 
 # --------------------------- KMeans ---------------------------#
 
@@ -228,20 +230,38 @@ def KMeans():
     return file.filename
 
 
+# def KMeansTrain(df, target):
+#     X = df.loc[:, df.columns != target].values
+#     y = df[target].values
+
+#     clusters = len(np.unique(y))
+#     print(clusters)
+
+#     k = KMeansCluster(K=clusters, max_iters=150, plot_steps=False)
+#     y_pred = k.predict(X)
+
+#     # Convert int8 values in predictions to int
+#     predictions = [int(pred) for pred in y_pred]
+
+#     return jsonify({"predictions": predictions})
+    
 def KMeansTrain(df, target):
     X = df.loc[:, df.columns != target].values
     y = df[target].values
 
-    clusters = len(np.unique(y))
-    print(clusters)
+    n_clusters = len(np.unique(y))
+    
 
-    k = KMeansCluster(K=clusters, max_iters=150, plot_steps=False)
+    k = KMeansCluster(K=n_clusters, max_iters=250, plot_steps=False)
     y_pred = k.predict(X)
 
-    # Convert int8 values in predictions to int
-    predictions = [int(pred) for pred in y_pred]
+    # Get the centroids of the clusters
+    centroids = k.centroids.tolist()
+    clusters = k.clusters
 
-    return jsonify({"predictions": predictions})
+    # Return the cluster assignments and centroids as a JSON response
+    return jsonify({"clusters": clusters, "centroids": centroids})
+
 
 
 if __name__ == "__main__":

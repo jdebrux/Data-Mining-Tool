@@ -11,12 +11,22 @@ const CheckboxList = ({ items, onSelectedItemChange }) => {
     onSelectedItemChange(items[index]);
   };
 
+  // return items.map((item, index) => (
+  //   <div key={index}>
+  //     <Checkbox checked={selected === index} onChange={() => handleChange(index)} icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
+  //     {item}
+  //   </div>
+  // ));
+
   return items.map((item, index) => (
-    <div key={index}>
+    <span key={index}>
       <Checkbox checked={selected === index} onChange={() => handleChange(index)} icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
       {item}
-    </div>
+    </span>
   ));
+
 };
+
+
 
 export default CheckboxList;

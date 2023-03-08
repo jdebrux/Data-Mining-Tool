@@ -3,18 +3,20 @@ import axios from 'axios';
 import ResponsiveAppBar from './components/ResponsiveAppBar';
 import CheckboxList from './components/Checkbox.js';
 import Grid from '@mui/material/Unstable_Grid2';
+import ConfusionMatrix from './components/ConfusionMatrix';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
 export default function LogisticRegression() {
     const [file, setFile] = useState(null);
+    const [logisticData, setLogisticData] = useState(null)
     const [featureList, setData] = useState(null)
     const [success, setSuccess] = useState(false);
 
     const [selectedItem, setSelectedItem] = useState(null);
 
     function handleSelectedItemChange(item) {
-      setSelectedItem(item);
+        setSelectedItem(item);
     }
 
     const handleFileUpload = event => {
@@ -42,21 +44,24 @@ export default function LogisticRegression() {
 
     const handleTargetSelect = event => {
         event.preventDefault();
-    
+
         const data = new FormData();
         data.append('file', file);
         data.append('featureList', JSON.stringify(featureList));
         data.append('selectedItem', JSON.stringify(selectedItem));
-    
+
         axios.post('http://localhost:5000/LogisticRegression', data)
             .then(res => {
                 console.log(res.data);
+                setLogisticData(res.data);
+                setSuccess(true);
             })
             .catch(error => {
                 console.error(error);
+                setSuccess(false);
             });
     };
-    
+
 
     return (
         <div>
@@ -87,7 +92,7 @@ export default function LogisticRegression() {
                     <Grid container rowSpacing={1} direction="row" alignItems="center" justify="center">
                         <form onSubmit={handleTargetSelect}>
                             <Typography variant="h6" color="common.white">Select Target</Typography>
-                            <CheckboxList items={featureList} onSelectedItemChange={handleSelectedItemChange}/>
+                            <CheckboxList items={featureList} onSelectedItemChange={handleSelectedItemChange} />
                             <p>Selected item: {selectedItem}</p>
                             <Button variant="outlined" type="submit">Submit</Button>
                         </form>
@@ -96,6 +101,19 @@ export default function LogisticRegression() {
                     <Typography variant="h6" color="common.white">
                         No data
                     </Typography>
+                )}
+            </Grid>
+            <br />
+            <Grid xs={12} rowSpacing={1} direction="row">
+                {success && logisticData ? (
+                    <Grid xs={12} rowSpacing={1} direction="row">
+                        <div>
+                            <ConfusionMatrix predicted={logisticData.predictions} actual={logisticData.actual} />
+                        </div>
+                    </Grid>
+
+                ) : (
+                    <br />
                 )}
             </Grid>
 

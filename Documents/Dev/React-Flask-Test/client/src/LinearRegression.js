@@ -77,7 +77,7 @@ export default function LinearRegression() {
         axios.post('http://localhost:5000/LinearRegression', data)
             .then(res => {
                 console.log(res.data);
-                setRegressionData(res.data)
+                setRegressionData(res.data);
                 setSuccess(true);
             })
             .catch(error => {

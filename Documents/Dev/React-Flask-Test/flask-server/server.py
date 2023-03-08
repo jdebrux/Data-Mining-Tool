@@ -247,20 +247,22 @@ def KMeans():
     
 def KMeansTrain(df, target):
     X = df.loc[:, df.columns != target].values
+    X_first_two = X[:, :2]
     y = df[target].values
 
     n_clusters = len(np.unique(y))
-    
 
     k = KMeansCluster(K=n_clusters, max_iters=250, plot_steps=False)
-    y_pred = k.predict(X)
+    y_pred = k.predict(X_first_two)
 
     # Get the centroids of the clusters
     centroids = k.centroids.tolist()
     clusters = k.clusters
 
+    cluster_points, centroid_points = k.plot()
+
     # Return the cluster assignments and centroids as a JSON response
-    return jsonify({"clusters": clusters, "centroids": centroids})
+    return jsonify({"clusters": cluster_points, "centroids": centroid_points})
 
 
 

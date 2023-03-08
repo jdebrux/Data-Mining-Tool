@@ -24,7 +24,8 @@ class KMeansCluster:
         self.n_samples, self.n_features = X.shape
 
         # initialize
-        random_sample_idxs = np.random.choice(self.n_samples, self.K, replace=False)
+        random_sample_idxs = np.random.choice(
+            self.n_samples, self.K, replace=False)
         self.centroids = [self.X[idx] for idx in random_sample_idxs]
 
         # optimize clusters
@@ -81,17 +82,33 @@ class KMeansCluster:
 
     def _is_converged(self, centroids_old, centroids):
         # distances between old and new centroids, for all centroids
-        distances = [euclidean_distance(centroids_old[i], centroids[i]) for i in range(self.K)]
+        distances = [euclidean_distance(
+            centroids_old[i], centroids[i]) for i in range(self.K)]
         return sum(distances) == 0
 
-    def plot(self):
-        fig, ax = plt.subplots(figsize=(12, 8))
+    # def plot(self):
+    #     fig, ax = plt.subplots(figsize=(12, 8))
 
+    #     for i, index in enumerate(self.clusters):
+    #         point = self.X[index].T
+    #         ax.scatter(*point)
+
+    #     for point in self.centroids:
+    #         ax.scatter(*point, marker="x", color="black", linewidth=2)
+
+    #     plt.show()
+
+
+    def plot(self):
+        cluster_points = []
+        centroid_points_x = []
+        centroid_points_y = []
         for i, index in enumerate(self.clusters):
             point = self.X[index].T
-            ax.scatter(*point)
+            cluster_points.append(point.tolist())
 
         for point in self.centroids:
-            ax.scatter(*point, marker="x", color="black", linewidth=2)
+            centroid_points_x.append(point[0])
+            centroid_points_y.append(point[1])
 
-        plt.show()
+        return cluster_points, (centroid_points_x, centroid_points_y)

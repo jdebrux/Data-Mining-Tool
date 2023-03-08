@@ -3,7 +3,6 @@ import axios from 'axios';
 import ResponsiveAppBar from './components/ResponsiveAppBar';
 import CheckboxList from './components/Checkbox.js';
 import Grid from '@mui/material/Unstable_Grid2';
-import ClusterPlot from './components/ClusterPlot';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
@@ -23,6 +22,27 @@ export default function KMeans() {
 
     const handleFileUpload = event => {
         setFile(event.target.files[0]);
+    };
+
+    const layout = {
+        title: 'Linear Regression',
+        xaxis: {
+            title: 'X',
+            showgrid: false,
+            zeroline: false
+        },
+        yaxis: {
+            title: 'Predictions',
+            showline: false
+        },
+        margin: {
+            l: 40,
+            r: 30,
+            t: 40,
+            b: 30
+        },
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        paper_bgcolor: 'rgba(0,0,0,0)'
     };
 
     const handleFormSubmit = event => {
@@ -110,7 +130,43 @@ export default function KMeans() {
                 {success && kmeansData ? (
                     <Grid xs={12} rowSpacing={1} direction="row">
                         <div>
-                            <ClusterPlot clusters={kmeansData.clusters} centroids={kmeansData.centroids} />
+                            <Plot
+                                data={[
+                                    {
+                                        x: kmeansData.centroids[0],
+                                        y: kmeansData.centroids[1],
+                                        type: 'scatter',
+                                        mode: 'markers',
+                                        marker: { color: 'black', symbol:'x' },
+                                        line: { width: 2 }
+                                    },{
+                                        x: kmeansData.clusters[0][0],
+                                        y: kmeansData.clusters[0][1],
+                                        type: 'scatter',
+                                        mode: 'markers',
+                                        marker: { color: 'red' },
+                                        line: { width: 2 }
+                                    },{
+                                        x: kmeansData.clusters[1][0],
+                                        y: kmeansData.clusters[1][1],
+                                        type: 'scatter',
+                                        mode: 'markers',
+                                        marker: { color: 'blue' },
+                                        line: { width: 2 }
+                                    },{
+                                        x: kmeansData.clusters[2][0],
+                                        y: kmeansData.clusters[2][1],
+                                        type: 'scatter',
+                                        mode: 'markers',
+                                        marker: { color: 'green' },
+                                        line: { width: 2 }
+                                    }
+                                    
+                                ]}
+                                layout={layout}
+                                width={1000}
+                                height={700}
+                            />
                         </div>
                     </Grid>
 

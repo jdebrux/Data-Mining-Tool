@@ -137,8 +137,8 @@ export default function KMeans() {
                                         y: kmeansData.centroids[1],
                                         type: 'scatter',
                                         mode: 'markers',
-                                        marker: { color: 'black', symbol:'x' },
-                                        line: { width: 2 }
+                                        marker: { color: 'white', symbol:'x' },
+                                        line: { width: 5 }
                                     },{
                                         x: kmeansData.clusters[0][0],
                                         y: kmeansData.clusters[0][1],

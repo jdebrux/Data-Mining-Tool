@@ -104,21 +104,31 @@ def linearRegressionTrain(df, target):
     X = df.loc[:, df.columns != target].values
     y = df[target].values
 
-    # split the data into training and test sets
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, random_state=123)
-
     reg = LinearRegression()
-    reg.fit(X_train, y_train)
-    predictions = reg.predict(X_test)
-
-    mse_value = mse(y_test, predictions)
-    print(mse_value)
-
-    y_pred_line = reg.predict(X)
+    y_pred_line = reg.fit_and_predict(X, y)
     print(y_pred_line)
     #return convert_to_recharts_format(X.flatten().tolist(), y_pred_line.tolist())
-    return jsonify({"predictions": y_pred_line.tolist(), "X": X.flatten().tolist(), "y":y.flatten().tolist()})
+    return jsonify({"predictions": y_pred_line, "X": X.flatten().tolist(), "y":y.flatten().tolist()})
+
+# def linearRegressionTrain(df, target):
+#     X = df.loc[:, df.columns != target].values
+#     y = df[target].values
+
+#     # split the data into training and test sets
+#     X_train, X_test, y_train, y_test = train_test_split(
+#         X, y, test_size=0.3, random_state=123)
+
+#     reg = LinearRegression()
+#     reg.fit(X_train, y_train)
+#     predictions = reg.predict(X_test)
+
+#     mse_value = mse(y_test, predictions)
+#     print(mse_value)
+
+#     y_pred_line = reg.predict(X)
+#     print(y_pred_line)
+#     #return convert_to_recharts_format(X.flatten().tolist(), y_pred_line.tolist())
+#     return jsonify({"predictions": y_pred_line.tolist(), "X": X.flatten().tolist(), "y":y.flatten().tolist()})
 
 
 # --------------------------- RANDOM FOREST ---------------------------#

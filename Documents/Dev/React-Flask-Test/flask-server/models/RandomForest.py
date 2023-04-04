@@ -18,7 +18,7 @@ class RandomForest:
         """
         Initializes the random forest.
 
-        Attributes:
+        Parameters:
             num_trees (int): The number of trees in the forest. Default is 10.
             max_tree_depth (int): The maximum depth of each tree in the forest. Default is 10.
             min_samples_for_split (int): The minimum number of samples required to split an internal node. Default is 2.
@@ -54,9 +54,9 @@ class RandomForest:
         """
         Create bootstrap samples for training each decision tree.
 
-        Attributes:
-        X (numpy.ndarray): Array of input features of shape (n_samples, n_features).
-        y (numpy.ndarray): Array of labels of shape (n_samples,).
+        Parameters:
+            X (numpy.ndarray): Array of input features of shape (n_samples, n_features).
+            y (numpy.ndarray): Array of labels of shape (n_samples,).
 
         Returns:
             tuple: A tuple containing the bootstrap samples of X and y, respectively.
@@ -72,7 +72,7 @@ class RandomForest:
         """
         Returns the label that occurs most frequently in the input array.
 
-        Attributes:
+        Parameters:
             y (numpy.ndarray): Array of labels of shape (n_samples,).
 
         Returns:
@@ -86,7 +86,7 @@ class RandomForest:
         """
         Predicts the label for each input sample using the fitted random forest.
 
-        Attributes:
+        Parameters:
             X (numpy.ndarray): Array of input features of shape (n_samples, n_features).
 
         Returns:

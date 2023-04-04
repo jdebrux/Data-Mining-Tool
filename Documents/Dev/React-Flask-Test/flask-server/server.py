@@ -106,8 +106,6 @@ def linearRegressionTrain(df, target):
 
     reg = LinearRegression()
     y_pred_line = reg.fit_and_predict(X, y)
-    print(y_pred_line)
-    #return convert_to_recharts_format(X.flatten().tolist(), y_pred_line.tolist())
     return jsonify({"predictions": y_pred_line, "X": X.flatten().tolist(), "y":y.flatten().tolist()})
 
 # def linearRegressionTrain(df, target):
@@ -152,7 +150,7 @@ def randomForestTrain(df, target):
     def accuracy(y_test, y_pred):
         return np.sum(y_test == y_pred) / len(y_test)
 
-    clf = RandomForest(n_trees=10)
+    clf = RandomForest(num_trees=10)
     clf.fit(X_train, y_train)
     predictions = clf.predict(X_test)
 

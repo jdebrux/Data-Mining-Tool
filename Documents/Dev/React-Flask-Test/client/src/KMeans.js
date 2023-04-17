@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import ResponsiveAppBar from './components/ResponsiveAppBar';
 import CheckboxList from './components/Checkbox.js';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
+import GradientText from './components/GradientText.js';
+import { Link } from 'react-router-dom';
 
 import Plot from 'react-plotly.js';
+import SideNav from './components/SideNav.js'
+
 
 export default function KMeans() {
     const [file, setFile] = useState(null);
@@ -87,93 +90,101 @@ export default function KMeans() {
 
     return (
         <div>
-            <ResponsiveAppBar />
-            <Grid xs={12} rowSpacing={1} direction="row">
-                <Typography variant="h4" color="common.white" align='center'> KMeans </Typography>
-            </Grid>
-            <Grid container rowSpacing={1} direction="row">
-                <Grid container marginRight={1}>
-                    <div>
-                        <form onSubmit={handleFormSubmit}>
-                            <Button variant="outlined" component="label" style={{ marginRight: "0.5rem" }}>
-                                Choose File
-                                <input type="file" id="file" name="file" hidden onChange={handleFileUpload} accept=".csv" />
-                            </Button>
-                            <Button variant="outlined" type="submit">Upload</Button>
-                        </form>
-                    </div>
+            <Grid container spacing={0} sx={{ padding: '10px' }}>
+                <Grid item xs={2}>
+                    <Link to="/" className="link-style">
+                        <h2>VIZIONARY</h2>
+                    </Link>
+                    <SideNav selectedItem="KMeans" />
                 </Grid>
-                <Grid container style={{ justifyContent: "flex-start" }}>
-                    {success ? <Typography variant="h6" color="common.white">Upload Successful</Typography> : file && <Typography variant="h6" color="common.white">{file.name}</Typography>}
-                </Grid>
+                <Grid xs={10} rowSpacing={1} direction="row" sx={{ padding: '10px' }}>
+                    <GradientText color1="#FF007A" color2="#FFFFFF" text="K-Means Clustering" />
+                    <Grid container rowSpacing={1} direction="row">
+                        <Grid container marginRight={1}>
+                            <div>
+                                <form onSubmit={handleFormSubmit}>
+                                    <Button variant="outlined" component="label" style={{ marginRight: "0.5rem" }}>
+                                        Choose File
+                                        <input type="file" id="file" name="file" hidden onChange={handleFileUpload} accept=".csv" />
+                                    </Button>
+                                    <Button variant="outlined" type="submit">Upload</Button>
+                                </form>
+                            </div>
+                        </Grid>
+                        <Grid container style={{ justifyContent: "flex-start" }}>
+                            {success ? <Typography variant="h6" color="common.white">Upload Successful</Typography> : file && <Typography variant="h6" color="common.white">{file.name}</Typography>}
+                        </Grid>
 
-            </Grid>
-            <br />
-            <Grid container rowSpacing={1} direction="row" alignItems="center" justify="center">
-                {success ? (
-                    <Grid container rowSpacing={1} direction="row" alignItems="center" justify="center">
-                        <form onSubmit={handleTargetSelect}>
-                            <Typography variant="h6" color="common.white">Select Target</Typography>
-                            <CheckboxList items={featureList} onSelectedItemChange={handleSelectedItemChange} />
-                            <p>Selected item: {selectedItem}</p>
-                            <Button variant="outlined" type="submit">Submit</Button>
-                        </form>
                     </Grid>
-                ) : (
-                    <Typography variant="h6" color="common.white">
-                        No data
-                    </Typography>
-                )}
-            </Grid>
-            <br />
-            <Grid xs={12} rowSpacing={1} direction="row">
-                {success && kmeansData ? (
-                    <Grid xs={12} rowSpacing={1} direction="row">
-                        <div>
-                            <Plot
-                                data={[
-                                    {
-                                        x: kmeansData.centroids[0],
-                                        y: kmeansData.centroids[1],
-                                        type: 'scatter',
-                                        mode: 'markers',
-                                        marker: { color: 'white', symbol:'x' },
-                                        line: { width: 5 }
-                                    },{
-                                        x: kmeansData.clusters[0][0],
-                                        y: kmeansData.clusters[0][1],
-                                        type: 'scatter',
-                                        mode: 'markers',
-                                        marker: { color: 'red' },
-                                        line: { width: 2 }
-                                    },{
-                                        x: kmeansData.clusters[1][0],
-                                        y: kmeansData.clusters[1][1],
-                                        type: 'scatter',
-                                        mode: 'markers',
-                                        marker: { color: 'blue' },
-                                        line: { width: 2 }
-                                    },{
-                                        x: kmeansData.clusters[2][0],
-                                        y: kmeansData.clusters[2][1],
-                                        type: 'scatter',
-                                        mode: 'markers',
-                                        marker: { color: 'green' },
-                                        line: { width: 2 }
-                                    }
-                                    
-                                ]}
-                                layout={layout}
-                                width={1000}
-                                height={700}
-                            />
-                        </div>
-                    </Grid>
-
-                ) : (
                     <br />
-                )}
+                    <Grid container rowSpacing={1} direction="row" alignItems="center" justify="center">
+                        {success ? (
+                            <Grid container rowSpacing={1} direction="row" alignItems="center" justify="center">
+                                <form onSubmit={handleTargetSelect}>
+                                    <Typography variant="h6" color="common.white">Select Target</Typography>
+                                    <CheckboxList items={featureList} onSelectedItemChange={handleSelectedItemChange} />
+                                    <p>Selected item: {selectedItem}</p>
+                                    <Button variant="outlined" type="submit">Submit</Button>
+                                </form>
+                            </Grid>
+                        ) : (
+                            <Typography variant="h6" color="common.white">
+                                No data
+                            </Typography>
+                        )}
+                    </Grid>
+                    <br />
+                    <Grid xs={12} rowSpacing={1} direction="row">
+                        {success && kmeansData ? (
+                            <Grid xs={12} rowSpacing={1} direction="row">
+                                <div>
+                                    <Plot
+                                        data={[
+                                            {
+                                                x: kmeansData.centroids[0],
+                                                y: kmeansData.centroids[1],
+                                                type: 'scatter',
+                                                mode: 'markers',
+                                                marker: { color: 'white', symbol: 'x' },
+                                                line: { width: 5 }
+                                            }, {
+                                                x: kmeansData.clusters[0][0],
+                                                y: kmeansData.clusters[0][1],
+                                                type: 'scatter',
+                                                mode: 'markers',
+                                                marker: { color: 'red' },
+                                                line: { width: 2 }
+                                            }, {
+                                                x: kmeansData.clusters[1][0],
+                                                y: kmeansData.clusters[1][1],
+                                                type: 'scatter',
+                                                mode: 'markers',
+                                                marker: { color: 'blue' },
+                                                line: { width: 2 }
+                                            }, {
+                                                x: kmeansData.clusters[2][0],
+                                                y: kmeansData.clusters[2][1],
+                                                type: 'scatter',
+                                                mode: 'markers',
+                                                marker: { color: 'green' },
+                                                line: { width: 2 }
+                                            }
+
+                                        ]}
+                                        layout={layout}
+                                        width={1000}
+                                        height={700}
+                                    />
+                                </div>
+                            </Grid>
+
+                        ) : (
+                            <br />
+                        )}
+                    </Grid>
+                </Grid>
             </Grid>
+
 
         </div>
     );

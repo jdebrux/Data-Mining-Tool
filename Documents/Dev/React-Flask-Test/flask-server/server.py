@@ -213,8 +213,6 @@ def KNNTrain(df, target):
     clf.fit(X_train, y_train)
     predictions = clf.predict(X_test)
 
-    print(type(predictions))
-
     acc = np.sum(predictions == y_test) / len(y_test)
     print(acc)
 
@@ -222,7 +220,7 @@ def KNNTrain(df, target):
     predictions = [int(pred) for pred in predictions]
 
     # Return response
-    return jsonify({"predictions": predictions, "accuracy": acc})
+    return jsonify({"actual":y_test.flatten().tolist(), "predictions": predictions, "accuracy": acc})
     
 
 # --------------------------- KMeans ---------------------------#

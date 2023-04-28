@@ -1,18 +1,5 @@
 import numpy as np
 
-
-def sigmoid(x):
-    """
-    Apply the sigmoid function element-wise to the input array.
-
-    Parameters:
-        x (array-like): Input array to apply sigmoid function to.
-
-    Returns:
-        ndarray: Output array with the same shape as input array.
-    """
-    return 1 / (1 + np.exp(-x))
-
 class LogisticRegression():
     """
     Binary logistic regression model with methods to fit and predict.
@@ -21,11 +8,23 @@ class LogisticRegression():
         lr (float, default=0.001): Learning rate for gradient descent optimization.
         n_iters (int, default=1000): Maximum number of iterations for gradient descent optimization.
     """
-    def __init__(self, lr=0.001, n_iters=1000):
+    def __init__(self, lr=0.0001, n_iters=5000):
         self.lr = lr
         self.n_iters = n_iters
         self.weights = None
         self.bias = None
+
+    def sigmoid(self, x):
+        """
+        Apply the sigmoid function element-wise to the input array.
+
+        Parameters:
+            x (array-like): Input array to apply sigmoid function to.
+
+        Returns:
+            ndarray: Output array with the same shape as input array.
+        """
+        return 1 / (1 + np.exp(-x))
 
     def _compute_linear_pred(self, X):
         """
@@ -70,7 +69,7 @@ class LogisticRegression():
 
         for _ in range(self.n_iters):
             linear_pred = self._compute_linear_pred(X)
-            predictions = sigmoid(linear_pred)
+            predictions = self.sigmoid(linear_pred)
 
             dw, db = self._compute_gradient(X, y, predictions)
 
@@ -88,7 +87,7 @@ class LogisticRegression():
             ndarray: Output array of predicted classes with shape (n_samples,).
         """
         linear_pred = self._compute_linear_pred(X)
-        y_pred = sigmoid(linear_pred)
+        y_pred = self.sigmoid(linear_pred)
         class_pred = np.round(y_pred)
         return class_pred.tolist()
 

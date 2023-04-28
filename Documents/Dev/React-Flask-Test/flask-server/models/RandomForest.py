@@ -14,7 +14,7 @@ class RandomForest:
         num_features (int): The number of features to consider when looking for the best split. If None, all features will be considered.
         trees (list of DecisionTree objects): The trees in the random forest.
     """
-    def __init__(self, num_trees=10, max_tree_depth=10, min_samples_for_split=2, num_features=None):
+    def __init__(self, num_trees=10, max_tree_depth=150, min_samples_for_split=6, num_features=None):
         """
         Initializes the random forest.
 

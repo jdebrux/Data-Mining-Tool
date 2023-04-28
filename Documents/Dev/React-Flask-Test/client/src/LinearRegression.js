@@ -7,6 +7,7 @@ import CheckboxList from './components/Checkbox.js';
 import SideNav from './components/SideNav.js'
 import GradientText from './components/GradientText.js';
 import { Link } from 'react-router-dom';
+import ResidualPlot from './components/ResidualPlot.js';
 
 
 import Plot from 'react-plotly.js';
@@ -19,26 +20,6 @@ export default function LinearRegression() {
     const [featureList, setData] = useState(null)
 
     const [selectedItem, setSelectedItem] = useState(null);
-    const layout = {
-        title: 'Linear Regression',
-        xaxis: {
-            title: 'X',
-            showgrid: false,
-            zeroline: false
-        },
-        yaxis: {
-            title: 'Predictions',
-            showline: false
-        },
-        margin: {
-            l: 40,
-            r: 30,
-            t: 40,
-            b: 30
-        },
-        plot_bgcolor: 'rgba(0,0,0,0)',
-        paper_bgcolor: 'rgba(0,0,0,0)'
-    };
 
 
     function handleSelectedItemChange(item) {
@@ -100,6 +81,11 @@ export default function LinearRegression() {
                 </Grid>
                 <Grid xs={10} rowSpacing={1} direction="row" sx={{ padding: '10px' }}>
                     <GradientText color1="#73B3FF" color2="#FFFFFF" text="Linear Regression" />
+                    <Typography variant="body1" class="light-text">
+                        Linear regression helps you to analyse the relationship between two numerical variables. To use linear regression,
+                        you need to upload a dataset with two columns of numerical data. The tool then calculates the line of best fit and displays it on a scatter plot, providing insight into the relationship
+                        between the two variables. This can help you make predictions and gain a deeper understanding of your data.
+                    </Typography>
                     <Grid container rowSpacing={1} direction="row">
                         <Grid container marginRight={1}>
                             <div>
@@ -135,10 +121,10 @@ export default function LinearRegression() {
                         )}
                     </Grid>
                     <br />
-                    <Grid xs={12} rowSpacing={1} direction="row">
+                    <Grid container justify="center" alignItems="center">
                         {success && regressionData ? (
-                            <Grid xs={12} rowSpacing={1} direction="row">
-                                <div>
+                            <Grid container spacing={2} sx={{ width: '100%' }}>
+                                <div style={{ width: '100%' }}>
                                     <Plot
                                         data={[
                                             {
@@ -146,22 +132,45 @@ export default function LinearRegression() {
                                                 y: regressionData.predictions,
                                                 type: 'scatter',
                                                 mode: 'lines',
-                                                marker: { color: 'red' },
-                                                line: { width: 2 }
+                                                marker: {
+                                                    color: 'white',
+                                                    line: {
+                                                        width: 2
+                                                    }
+                                                }
                                             },
                                             {
                                                 x: regressionData.X,
                                                 y: regressionData.y,
                                                 type: 'scatter',
                                                 mode: 'markers',
-                                                marker: { color: 'blue' },
-                                                line: { width: 1 }
+                                                marker: {
+                                                    color: regressionData.y,
+                                                    colorscale: 'Blues',
+                                                    colorbar: {
+                                                        title: 'Y',
+                                                    },
+                                                    line: {
+                                                        width: 1
+                                                    }
+                                                }
                                             }
                                         ]}
-                                        layout={layout}
-                                        width={1000}
-                                        height={700}
+                                        layout={{
+                                            title: 'Linear Regression Plot',
+                                            xaxis: { title: 'X', color: '#FFFFFF' },
+                                            yaxis: { title: 'Y', color: '#FFFFFF' },
+                                            plot_bgcolor: 'rgba(0,0,0,0)',
+                                            paper_bgcolor: 'rgba(0,0,0,0)',
+                                            font: { color: '#FFFFFF' },
+                                            margin: { t: 50 },
+                                            width:'100%',
+                                            height:"100%"
+                                        }}
                                     />
+
+
+                                    <ResidualPlot regressionData={regressionData} />
                                 </div>
                             </Grid>
 

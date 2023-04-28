@@ -13,21 +13,18 @@ class KMeansCluster:
     Attributes:
         K (int): The number of clusters to form.
         max_iters (int): The maximum number of iterations to run the algorithm.
-        plot_steps (bool): Whether to plot the steps during the algorithm.
     """
 
-    def __init__(self, K=5, max_iters=100, plot_steps=False):
+    def __init__(self, K=5, max_iters=100):
         """
-        Initialize KMeansCluster with K, max_iters and plot_steps.
+        Initialize KMeansCluster with K and max_iters.
 
         Parameters:
             K (int, default: 5): The number of clusters to form.
             max_iters (int, default: 100): The maximum number of iterations to run the algorithm.
-            plot_steps (bool, default: False): Whether to plot the steps during the algorithm.
         """
         self.K = K
         self.max_iters = max_iters
-        self.plot_steps = plot_steps
 
         # list of sample indices for each cluster
         self.clusters = [[] for _ in range(self.K)]
@@ -43,25 +40,24 @@ class KMeansCluster:
         self.centroids = self._kmeans_plus_plus()
 
         # optimize clusters
-        for i in range(self.max_iters):
-            # assign samples to closest centroids (create clusters)
-            self.clusters = self._create_clusters(self.centroids)
-
-            if self.plot_steps:
-                self.plot()
-
-            # calculate new centroids from the clusters
-            centroids_old = self.centroids
-            self.centroids = self._get_centroids(self.clusters)
-
-            if self._is_converged(centroids_old, self.centroids):
-                break
-
-            if self.plot_steps:
-                self.plot()
+        self._optimize_clusters()
 
         # classify samples as the index of their clusters
         return self._get_cluster_labels(self.clusters)
+
+    def _optimize_clusters(self):
+        i = 0
+        while i < self.max_iters:
+            # assign samples to closest centroids (create clusters)
+            self.clusters = self._form_clusters(self.centroids)
+
+            # calculate new centroids from the clusters
+            centroids_old = self.centroids
+            self.centroids = self._create_new_centroids(self.clusters)
+
+            if self._is_converged(centroids_old, self.centroids):
+                break
+            i += 1
 
     def _kmeans_plus_plus(self):
         """
@@ -74,7 +70,7 @@ class KMeansCluster:
         centroids = [self.X[np.random.randint(self.n_samples)]]
 
         for i in range(1, self.K):
-            # calculate distances to the nearest centroid for each sample
+            # calculate euclidean distances to the nearest centroid for each sample
             distances = np.array(
                 [min([euclidean_distance(x, c) for c in centroids]) for x in self.X])
 
@@ -103,7 +99,7 @@ class KMeansCluster:
 
         return labels
 
-    def _create_clusters(self, centroids):
+    def _form_clusters(self, centroids):
         """
         Assign samples to the closest centroids.
 
@@ -113,30 +109,17 @@ class KMeansCluster:
         Returns:
             list: A list of clusters where each cluster is a list of sample indices.
         """
-        # assign the samples to the closest centroids
+        # compute euclidian distances between samples and centroids
+        distances = np.sqrt(((self.X[:, np.newaxis, :] - centroids)**2).sum(axis=2))
+
+        # assign samples to closest centroids
+        closest_centroids = np.argmin(distances, axis=1)
         clusters = [[] for _ in range(self.K)]
-        for idx, sample in enumerate(self.X):
-            centroid_idx = self._closest_centroid(sample, centroids)
+        for idx, centroid_idx in enumerate(closest_centroids):
             clusters[centroid_idx].append(idx)
         return clusters
 
-    def _closest_centroid(self, sample, centroids):
-        """
-        Return the index of the closest centroid to the given sample.
-
-        Parameters:
-            sample (numpy.ndarray): An array of shape (n_features,) representing a single sample.
-            centroids (numpy.ndarray): An array of shape (K, n_features) containing the current centroids.
-
-        Returns:
-            int: The index of the closest centroid to the given sample.
-        """
-        # distance of the current sample to each centroid
-        distances = [euclidean_distance(sample, point) for point in centroids]
-        closest_idx = np.argmin(distances)
-        return closest_idx
-
-    def _get_centroids(self, clusters):
+    def _create_new_centroids(self, clusters):
         """
         Calculate the new centroids based on the samples in each cluster.
 

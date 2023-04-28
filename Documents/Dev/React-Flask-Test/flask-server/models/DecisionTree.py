@@ -38,7 +38,14 @@ class Node:
         Returns:
             bool: True if this node is a leaf node, False otherwise.
         """
-        return self.class_label is not None
+        # Check if the current node is a leaf node
+        if self.class_label is None:
+            # If the class label of the current node is None, it means that the current node is not a leaf node
+            return False
+        else:
+            # If the class label of the current node is not None, it means that the current node is a leaf node
+            return True
+
 
 
 class DecisionTree:
@@ -52,7 +59,7 @@ class DecisionTree:
         root (Node object or None): The root node of the decision tree. If the tree has not been trained yet, root will be None.
     """
 
-    def __init__(self, min_samples_split=4, max_depth=150, n_features=None):
+    def __init__(self, min_samples_split=5, max_depth=250, n_features=None):
         self.min_sample_split = min_samples_split
         self.max_depth = max_depth
         self.n_features = n_features
@@ -147,8 +154,19 @@ class DecisionTree:
                     split_idx = feat_idx
                     split_threshold = thr
 
-        left_idxs = X[:, split_idx] <= split_threshold
-        right_idxs = X[:, split_idx] > split_threshold
+        # Get the split column from the feature matrix
+        split_column = X[:, split_idx]
+
+        # Create a boolean mask for samples that belong to the left node
+        left_mask = split_column <= split_threshold
+
+        # Create a boolean mask for samples that belong to the right node
+        right_mask = split_column > split_threshold
+
+        # Apply the masks to get the indices of the samples that belong to the left and right nodes
+        left_idxs = np.where(left_mask)[0]
+        right_idxs = np.where(right_mask)[0]
+
 
         return split_idx, split_threshold, left_idxs, right_idxs
 

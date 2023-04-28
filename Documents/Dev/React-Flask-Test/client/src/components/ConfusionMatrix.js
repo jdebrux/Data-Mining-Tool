@@ -36,7 +36,7 @@ function ConfusionMatrix({ predicted, actual }) {
                 x: labels,
                 y: labels,
                 type: 'heatmap',
-                colorscale: 'Viridis',
+                colorscale: 'Blues',
                 reversescale: true,
             },
         ];
@@ -45,7 +45,8 @@ function ConfusionMatrix({ predicted, actual }) {
             xaxis: { title: 'Predicted Label' },
             yaxis: { title: 'True Label' },
             plot_bgcolor: 'rgba(0,0,0,0)',
-            paper_bgcolor: 'rgba(0,0,0,0)'
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: 'white' },
         };
         Plotly.newPlot(plotRef.current, data, layout);
     }, [predicted, actual]);

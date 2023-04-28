@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import CheckboxList from './components/Checkbox.js';
 import ConfusionMatrix from './components/ConfusionMatrix';
+import ReportPlot from './components/ReportPlot.js';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
@@ -76,6 +77,11 @@ export default function RandomForest() {
                 </Grid>
                 <Grid xs={10} rowSpacing={1} direction="row" sx={{ padding: '10px' }}>
                     <GradientText color1="#FAFF00" color2="#FFFFFF" text="K-Nearest Neighbours" />
+                    <Typography variant="body1" class="light-text">
+                        K-nearest neighbors is a tool that classifies data points based on their similarity to nearby data points. It uses a dataset with a categorical target variable and one or more numerical input variables.
+                        The algorithm calculates the distance between a new data point and the dataset, selects the K nearest neighbors, and provides a classification based on the most common label among them. To use K-nearest neighbors,
+                        you need to upload a dataset that includes a categorical target variable and one or more numerical input variables. K-nearest neighbors is often used for image recognition, recommendation systems, and anomaly detection.
+                    </Typography>
                     <Grid container rowSpacing={1} direction="row">
                         <Grid container marginRight={1}>
                             <div>
@@ -111,22 +117,22 @@ export default function RandomForest() {
                         )}
                     </Grid>
                     <br />
-                    <Grid xs={12} rowSpacing={1} direction="row">
+                    <Grid container justify="center" alignItems="center">
                         {success && knnData ? (
-                            <Grid xs={12} rowSpacing={1} direction="row">
-                                <div>
-                                    <Grid xs={12} rowSpacing={1} direction="row">
-                                        <div>
-                                            <ConfusionMatrix predicted={knnData.predictions} actual={knnData.actual} />
-                                        </div>
-                                    </Grid>
-                                </div>
+                            <Grid container spacing={2} sx={{ width: '100%' }}>
+                                <Grid item xs={8}>
+                                    <ConfusionMatrix predicted={knnData.predictions} actual={knnData.actual}/>
+                                </Grid>
+                                <Grid item xs={4} sx={{ paddingTop: '100px' }} >
+                                    <ReportPlot data={knnData.report} />
+                                </Grid>
                             </Grid>
-
                         ) : (
                             <br />
                         )}
                     </Grid>
+
+
                 </Grid>
             </Grid>
         </div>

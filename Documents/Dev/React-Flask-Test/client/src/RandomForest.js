@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import CheckboxList from './components/Checkbox.js';
 import ConfusionMatrix from './components/ConfusionMatrix';
+import ReportPlot from './components/ReportPlot.js';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
@@ -78,6 +79,11 @@ export default function RandomForest() {
                 </Grid>
                 <Grid xs={10} rowSpacing={1} direction="row" sx={{ padding: '10px' }}>
                     <GradientText color1="#00FF66" color2="#FFFFFF" text="Random Forest" />
+                    <Typography variant="body1" class="light-text">
+                        Random forests can help you to make predictions about a target variable based on multiple input variables. To use the random forest classifier, you need to upload a dataset that 
+                        includes a categorical target variable and one or more numerical input variables. The tool then builds multiple decision trees using a random subset of the input variables and a 
+                        random subset of the data. It combines the results of these decision trees to make predictions about the target variable.
+                    </Typography>
                     <Grid container rowSpacing={1} direction="row">
                         <Grid container marginRight={1}>
                             <div>
@@ -113,18 +119,16 @@ export default function RandomForest() {
                         )}
                     </Grid>
                     <br />
-                    <Grid xs={12} rowSpacing={1} direction="row">
+                    <Grid container justify="center" alignItems="center">
                         {success && forestData ? (
-                            <Grid xs={12} rowSpacing={1} direction="row">
-                                <div>
-                                    <Grid xs={12} rowSpacing={1} direction="row">
-                                        <div>
-                                            <ConfusionMatrix predicted={forestData.predictions} actual={forestData.actual} />
-                                        </div>
-                                    </Grid>
-                                </div>
+                            <Grid container spacing={2} sx={{ width: '100%' }}>
+                                <Grid item xs={8}>
+                                    <ConfusionMatrix predicted={forestData.predictions} actual={forestData.actual} />
+                                </Grid>
+                                <Grid item xs={4} sx={{ paddingTop: '100px' }} >
+                                    <ReportPlot data={forestData.report} />
+                                </Grid>
                             </Grid>
-
                         ) : (
                             <br />
                         )}

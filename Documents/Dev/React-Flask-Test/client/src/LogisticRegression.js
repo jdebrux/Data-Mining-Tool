@@ -3,6 +3,7 @@ import axios from 'axios';
 import CheckboxList from './components/Checkbox.js';
 import Grid from '@mui/material/Unstable_Grid2';
 import ConfusionMatrix from './components/ConfusionMatrix';
+import ReportPlot from './components/ReportPlot.js';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import SideNav from './components/SideNav.js'
@@ -77,6 +78,11 @@ export default function LogisticRegression() {
                 </Grid>
                 <Grid xs={10} rowSpacing={1} direction="row" sx={{ padding: '10px' }}>
                     <GradientText color1="#FF5757" color2="#FFFFFF" text="Logistic Regression" />
+                    <Typography variant="body1" class="light-text">
+                        Logistic regression is a tool that helps you to understand the relationship between a categorical target variable and one or more input variables.
+                        To use logistic regression, you need to upload a dataset that includes a categorical target variable and one or more numerical input variables. The
+                        tool then calculates the probability of the target variable belonging to each category based on the values of the input variables.
+                    </Typography>
                     <Grid container rowSpacing={1} direction="row">
                         <Grid container marginRight={1}>
                             <div>
@@ -112,18 +118,16 @@ export default function LogisticRegression() {
                         )}
                     </Grid>
                     <br />
-                    <Grid xs={12} rowSpacing={1} direction="row">
+                    <Grid container justify="center" alignItems="center">
                         {success && logisticData ? (
-                            <Grid xs={12} rowSpacing={1} direction="row">
-                                <div>
-                                    <Grid xs={12} rowSpacing={1} direction="row">
-                                        <div>
-                                            <ConfusionMatrix predicted={logisticData.predictions} actual={logisticData.actual} />
-                                        </div>
-                                    </Grid>
-                                </div>
+                            <Grid container spacing={2} sx={{ width: '100%' }}>
+                            <Grid item xs={8}>
+                                    <ConfusionMatrix predicted={logisticData.predictions} actual={logisticData.actual} />
+                                </Grid>
+                                <Grid item xs={4} sx={{ paddingTop: '100px' }} >
+                                    <ReportPlot data={logisticData.report} />
+                                </Grid>
                             </Grid>
-
                         ) : (
                             <br />
                         )}

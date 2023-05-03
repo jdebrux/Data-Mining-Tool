@@ -93,9 +93,10 @@ class KMeansCluster:
         """
         # each sample will get the label of the cluster it was assigned to
         labels = np.empty(self.n_samples)
+
+        # assign the cluster index to each sample in the corresponding cluster
         for cluster_idx, cluster in enumerate(clusters):
-            for sample_idx in cluster:
-                labels[sample_idx] = cluster_idx
+            labels[cluster] = cluster_idx
 
         return labels
 
@@ -110,7 +111,8 @@ class KMeansCluster:
             list: A list of clusters where each cluster is a list of sample indices.
         """
         # compute euclidian distances between samples and centroids
-        distances = np.sqrt(((self.X[:, np.newaxis, :] - centroids)**2).sum(axis=2))
+        distances = np.sqrt(
+            ((self.X[:, np.newaxis, :] - centroids)**2).sum(axis=2))
 
         # assign samples to closest centroids
         closest_centroids = np.argmin(distances, axis=1)
@@ -152,10 +154,11 @@ class KMeansCluster:
         Returns:
             bool: True if the algorithm has converged, False otherwise.
         """
-        # distances between old and new centroids, for all centroids
-        distances = [euclidean_distance(
-            centroids_old[i], centroids[i]) for i in range(self.K)]
-        return sum(distances) == 0
+        for i in range(self.K):
+            if euclidean_distance(centroids_old[i], centroids[i]) != 0:
+                return False
+        return True
+
 
     def plot(self):
         """

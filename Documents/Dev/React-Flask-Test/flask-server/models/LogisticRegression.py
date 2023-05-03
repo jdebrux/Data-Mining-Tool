@@ -10,7 +10,7 @@ class LogisticRegression():
     """
     def __init__(self, lr=0.0001, n_iters=5000):
         self.lr = lr
-        self.n_iters = n_iters
+        self.iteration_num = n_iters
         self.weights = None
         self.bias = None
 
@@ -63,11 +63,11 @@ class LogisticRegression():
             X (array-like): Input array of shape (n_samples, n_features).
             y (array-like): Target array of shape (n_samples,).
         """
-        n_samples, n_features = X.shape
-        self.weights = np.zeros(n_features)
         self.bias = 0
+        samples, features = X.shape
+        self.weights = np.zeros(features)
 
-        for _ in range(self.n_iters):
+        for i in range(self.iteration_num):
             linear_pred = self._compute_linear_pred(X)
             predictions = self.sigmoid(linear_pred)
 

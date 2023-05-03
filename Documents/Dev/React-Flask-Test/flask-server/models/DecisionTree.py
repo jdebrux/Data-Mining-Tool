@@ -47,7 +47,6 @@ class Node:
             return True
 
 
-
 class DecisionTree:
     """ 
     A decision tree classifier for binary classification problems.
@@ -59,8 +58,8 @@ class DecisionTree:
         root (Node object or None): The root node of the decision tree. If the tree has not been trained yet, root will be None.
     """
 
-    def __init__(self, min_samples_split=5, max_depth=250, n_features=None):
-        self.min_sample_split = min_samples_split
+    def __init__(self, split_thresh=5, max_depth=250, n_features=None):
+        self.split_thresh = split_thresh
         self.max_depth = max_depth
         self.n_features = n_features
         self.root = None
@@ -83,7 +82,7 @@ class DecisionTree:
         self.n_features = self.n_features or n_feats
 
         # Build the decision tree recursively starting from the root node
-        self.root = self._build_tree(X, y, depth=0)
+        self.root = self._build_tree(X, y, depth=5)
 
     def _build_tree(self, X, y, depth=0):
         """
@@ -104,10 +103,10 @@ class DecisionTree:
         # get the number of unique labels
         n_labels = len(np.unique(y))
 
-        # check the stopping criteria
-        if depth >= self.max_depth or n_labels == 1 or len(X) < 2*self.min_sample_split:
+        # check if max depth is reached or if the split threshhold is too high
+        if depth >= self.max_depth or n_labels == 1 or len(X) < 2*self.split_thresh:
             # create a leaf node and assign it the most common label in y
-            leaf_value = self._most_common_label(y)
+            leaf_value = self._determine_majority_vote(y)
             return Node(class_label=leaf_value)
 
         # find the best split
@@ -137,22 +136,20 @@ class DecisionTree:
             threshold value of the optimal split, (3) the indices of the samples that should be assigned to the left
             node, and (4) the indices of the samples that should be assigned to the right node.
         """
-        best_gain = -1
-        split_idx, split_threshold = None, None
         feat_idxs = np.random.choice(n_feats, self.n_features, replace=False)
+        gains = np.zeros((len(feat_idxs),))
+        thresholds = np.zeros((len(feat_idxs),))
 
-        for feat_idx in feat_idxs:
+        for i, feat_idx in enumerate(feat_idxs):
             X_column = X[:, feat_idx]
-            thresholds = set(X_column)
+            unique_thresholds = np.unique(X_column)
+            thresholds[i] = unique_thresholds[np.random.choice(
+                len(unique_thresholds))]
+            gains[i] = self._information_gain(y, X_column, thresholds[i])
 
-            for thr in thresholds:
-                # calculate the information gain
-                gain = self._information_gain(y, X_column, thr)
-
-                if gain > best_gain:
-                    best_gain = gain
-                    split_idx = feat_idx
-                    split_threshold = thr
+        best_gain_idx = np.argmax(gains)
+        split_idx = feat_idxs[best_gain_idx]
+        split_threshold = thresholds[best_gain_idx]
 
         # Get the split column from the feature matrix
         split_column = X[:, split_idx]
@@ -166,7 +163,6 @@ class DecisionTree:
         # Apply the masks to get the indices of the samples that belong to the left and right nodes
         left_idxs = np.where(left_mask)[0]
         right_idxs = np.where(right_mask)[0]
-
 
         return split_idx, split_threshold, left_idxs, right_idxs
 
@@ -187,17 +183,18 @@ class DecisionTree:
         parent_entropy = self._entropy(y)
 
         # Split data using threshold
-        left_idx, right_idx = self._split(X_column, thr)
+        left_mask = X_column <= thr
+        right_mask = X_column > thr
 
         # Check if the split is valid
-        if len(left_idx) == 0 or len(right_idx) == 0:
+        if not np.any(left_mask) or not np.any(right_mask):
             return 0
 
         # Calculate number of samples and class frequencies for the split
         n = len(y)
-        n_l, n_r = len(left_idx), len(right_idx)
-        hist_l = np.bincount(y[left_idx], minlength=len(np.unique(y)))
-        hist_r = np.bincount(y[right_idx], minlength=len(np.unique(y)))
+        n_l, n_r = np.sum(left_mask), np.sum(right_mask)
+        hist_l = np.bincount(y[left_mask], minlength=len(np.unique(y)))
+        hist_r = np.bincount(y[right_mask], minlength=len(np.unique(y)))
 
         # Calculate entropy for the split
         e_l = self._entropy_from_hist(hist_l, n_l)
@@ -207,7 +204,6 @@ class DecisionTree:
         # Calculate the information gain
         information_gain = parent_entropy - child_entropy
         return information_gain
-
 
     def _entropy_from_hist(self, hist, n):
         """
@@ -222,23 +218,6 @@ class DecisionTree:
         """
         ps = hist / n
         return -np.sum([p * np.log(p) for p in ps if p > 0])
-
-
-    def _split(self, X_column, split_thresh):
-        """
-        Splits a feature column of the data based on the split threshold.
-
-        Parameters:
-            X_column (numpy.ndarray): column of feature values for a feature
-            split_thresh (float): split threshold value
-
-        Returns:
-            (tuple): tuple containing the indices of the left and right child nodes
-        """
-        left_idxs = np.where(X_column <= split_thresh)[0]
-        right_idxs = np.where(X_column > split_thresh)[0]
-        return left_idxs, right_idxs
-
 
     def _entropy(self, y):
         """
@@ -264,8 +243,7 @@ class DecisionTree:
 
         return entropy
 
-
-    def _most_common_label(self, y):
+    def _determine_majority_vote(self, y):
         """
         Finds the most common label from the target labels.
 
@@ -275,10 +253,9 @@ class DecisionTree:
         Returns:
             (float): the most common label value
         """
-        counter = Counter(y)
-        value = counter.most_common(1)[0][0]
-        return value
-
+        counts = np.bincount(y.astype(int))
+        value = np.argmax(counts)
+        return float(value)
 
     def predict(self, X):
         """
@@ -291,7 +268,6 @@ class DecisionTree:
             (numpy.ndarray): predicted class labels for the set of samples
         """
         return np.array([self._traverse_tree(x, self.root) for x in X])
-
 
     def _traverse_tree(self, x, node):
         """

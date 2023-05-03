@@ -41,14 +41,14 @@ class RandomForest:
         """
         # Clear any existing trees and create new trees
         self.trees = []
-        for _ in range(self.num_trees):
+        i = 0
+        while i < self.num_trees:
             # Create a new decision tree and fit on a bootstrapped sample of the data
-            tree = DecisionTree(max_depth=self.max_tree_depth,
-                                min_samples_split=self.min_samples_for_split,
-                                n_features=self.num_features)
+            tree = DecisionTree(max_depth=self.max_tree_depth, split_thresh=self.min_samples_for_split, n_features=self.num_features)
             X_sample, y_sample = self._create_bootstrap_samples(X, y)
             tree.fit(X_sample, y_sample)
             self.trees.append(tree)
+            i += 1
 
     def _create_bootstrap_samples(self, X, y):
         """
@@ -68,6 +68,32 @@ class RandomForest:
         indices = indices[:n_samples]
         return X[indices], y[indices]
 
+    def predict(self, X):
+        """
+        Predicts the label for each input sample using the fitted random forest.
+
+        Parameters:
+            X (numpy.ndarray): Array of input features of shape (n_samples, n_features).
+
+        Returns:
+            numpy.ndarray: Array of predicted labels of shape (n_samples,).
+        """
+        # Predict labels for each tree in the forest and calculate the most frequent label
+        predictions = []
+        for tree in self.trees:
+            prediction = tree.predict(X)
+            predictions.append(prediction)
+        
+        predictions = np.array(predictions)
+        tree_preds = np.swapaxes(predictions, 0, 1)
+        
+        majority_preds = []
+        for pred in tree_preds:
+            majority_pred = self._majority_vote(pred)
+            majority_preds.append(majority_pred)
+        
+        return np.array(majority_preds)
+    
     def _majority_vote(self, y):
         """
         Returns the label that occurs most frequently in the input array.
@@ -81,20 +107,3 @@ class RandomForest:
         # Return the label that occurs most frequently in the array y
         unique_labels, counts = np.unique(y, return_counts=True)
         return unique_labels[np.argmax(counts)]
-
-    def predict(self, X):
-        """
-        Predicts the label for each input sample using the fitted random forest.
-
-        Parameters:
-            X (numpy.ndarray): Array of input features of shape (n_samples, n_features).
-
-        Returns:
-            numpy.ndarray: Array of predicted labels of shape (n_samples,).
-        """
-        # Predict labels for each tree in the forest and calculate the most frequent label
-        predictions = np.array([tree.predict(X) for tree in self.trees])
-        tree_preds = np.swapaxes(predictions, 0, 1)
-        predictions = np.array([self._majority_vote(pred)
-                               for pred in tree_preds])
-        return predictions

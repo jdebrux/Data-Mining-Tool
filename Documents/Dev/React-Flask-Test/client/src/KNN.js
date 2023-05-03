@@ -6,6 +6,7 @@ import ReportPlot from './components/ReportPlot.js';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import SideNav from './components/SideNav.js'
 import GradientText from './components/GradientText.js';
 import { Link } from 'react-router-dom';
@@ -15,6 +16,7 @@ export default function RandomForest() {
     const [knnData, setForestData] = useState(null)
     const [featureList, setData] = useState(null)
     const [success, setSuccess] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [selectedItem, setSelectedItem] = useState(null);
 
@@ -42,6 +44,7 @@ export default function RandomForest() {
             .catch(error => {
                 console.error(error);
                 setSuccess(false);
+                setErrorMessage(error);
             });
     };
 
@@ -62,12 +65,28 @@ export default function RandomForest() {
             .catch(error => {
                 console.error(error);
                 setSuccess(false);
+                setErrorMessage("Selected Dataset is not compatible with the chosen algorithm.");
             });
     };
 
 
     return (
         <div>
+            <Dialog open={errorMessage} onClose={() => {
+                setErrorMessage(null);
+            }}>
+                <DialogTitle>Error</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {errorMessage}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {
+                        setErrorMessage(null);
+                    }}>OK</Button>
+                </DialogActions>
+            </Dialog>
             <Grid container spacing={0} sx={{ padding: '10px' }}>
                 <Grid item xs={2}>
                     <Link to="/" className="link-style">
@@ -121,7 +140,7 @@ export default function RandomForest() {
                         {success && knnData ? (
                             <Grid container spacing={2} sx={{ width: '100%' }}>
                                 <Grid item xs={8}>
-                                    <ConfusionMatrix predicted={knnData.predictions} actual={knnData.actual}/>
+                                    <ConfusionMatrix predicted={knnData.predictions} actual={knnData.actual} />
                                 </Grid>
                                 <Grid item xs={4} sx={{ paddingTop: '100px' }} >
                                     <ReportPlot data={knnData.report} />

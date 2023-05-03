@@ -1,39 +1,31 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import React from "react";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
-function MetricsTable(props) {
-  const { metrics } = props;
-
-  return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Metric</TableCell>
-            <TableCell>Value</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {Object.entries(metrics).map(([key, value]) => (
-            <TableRow key={key}>
-              <TableCell>{key}</TableCell>
-              <TableCell>{value}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-}
-
-MetricsTable.propTypes = {
-  metrics: PropTypes.shape({
-    MAE: PropTypes.number.isRequired,
-    MSE: PropTypes.number.isRequired,
-    RMSE: PropTypes.number.isRequired,
-    "R^2": PropTypes.number.isRequired,
-  }).isRequired,
+const MetricsTable = ({ metrics }) => {
+    return (
+        <TableContainer sx={{ backgroundColor: 'transparent' }} size="small">
+            <Table size="small">
+                <TableHead>
+                    <TableRow>
+                        <TableCell style={{ color: "white" }}>Metric</TableCell>
+                        <TableCell style={{ color: "white" }}>Value</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {Object.entries(metrics).map(([key, value]) => (
+                        <TableRow key={key}>
+                            <TableCell component="th" scope="row" style={{ color: "white" }}>
+                                {key}
+                            </TableCell>
+                            <TableCell style={{ color: "white" }}>
+                                {value}
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
 };
 
 export default MetricsTable;

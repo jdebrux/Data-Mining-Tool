@@ -4,10 +4,10 @@ import CheckboxList from './components/Checkbox.js';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import GradientText from './components/GradientText.js';
 import { Link } from 'react-router-dom';
 import KMeansPlot from './components/KMeansPlot.js';
-
 import SideNav from './components/SideNav.js'
 
 
@@ -16,7 +16,7 @@ export default function KMeans() {
     const [kmeansData, setKmeansData] = useState(null)
     const [featureList, setData] = useState(null)
     const [success, setSuccess] = useState(false);
-
+    const [errorMessage, setErrorMessage] = useState('');
     const [selectedItem, setSelectedItem] = useState(null);
 
     function handleSelectedItemChange(item) {
@@ -43,6 +43,7 @@ export default function KMeans() {
             .catch(error => {
                 console.error(error);
                 setSuccess(false);
+                setErrorMessage(error);
             });
     };
 
@@ -63,12 +64,28 @@ export default function KMeans() {
             .catch(error => {
                 console.error(error);
                 setSuccess(false);
+                setErrorMessage("Selected Dataset is not compatible with the chosen algorithm.");
             });
     };
 
 
     return (
         <div>
+            <Dialog open={errorMessage} onClose={() => {
+                setErrorMessage(null);
+            }}>
+                <DialogTitle>Error</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {errorMessage}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {
+                        setErrorMessage(null);
+                    }}>OK</Button>
+                </DialogActions>
+            </Dialog>
             <Grid container spacing={0} sx={{ padding: '10px' }}>
                 <Grid item xs={2}>
                     <Link to="/" className="link-style">
@@ -121,11 +138,20 @@ export default function KMeans() {
                     <br />
                     <Grid xs={12} rowSpacing={1} direction="row">
                         {success && kmeansData ? (
-                            <Grid xs={12} rowSpacing={1} direction="row">
-                                <div>
-                                    <KMeansPlot kmeansData={kmeansData}/>
-                                </div>
+                            <Grid container spacing={1}>
+                                <Grid item xs={8}>
+                                    <div style={{ backgroundColor: 'transparent', color: 'white' }}>
+                                        <KMeansPlot kmeansData={kmeansData} />
+                                    </div>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <div style={{ backgroundColor: 'transparent', color: 'white' }}>
+                                        <GradientText color1="#FF007A" color2="#FFFFFF" text="Silhouette Score:" />
+                                        <GradientText color1="#FF007A" color2="#FFFFFF" text={kmeansData.silhouette} />
+                                    </div>
+                                </Grid>
                             </Grid>
+
 
                         ) : (
                             <br />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Grid from '@mui/material/Unstable_Grid2';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import CheckboxList from './components/Checkbox.js';
@@ -8,6 +9,7 @@ import SideNav from './components/SideNav.js'
 import GradientText from './components/GradientText.js';
 import { Link } from 'react-router-dom';
 import ResidualPlot from './components/ResidualPlot.js';
+import MetricsTable from './components/MetricsTable.js';
 
 
 import Plot from 'react-plotly.js';
@@ -15,9 +17,10 @@ import Plot from 'react-plotly.js';
 
 export default function LinearRegression() {
     const [file, setFile] = useState(null);
-    const [regressionData, setRegressionData] = useState(null)
+    const [regressionData, setRegressionData] = useState(null);
     const [success, setSuccess] = useState(false);
-    const [featureList, setData] = useState(null)
+    const [featureList, setData] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [selectedItem, setSelectedItem] = useState(null);
 
@@ -46,6 +49,7 @@ export default function LinearRegression() {
             .catch(error => {
                 console.error(error);
                 setSuccess(false);
+                setErrorMessage(error);
             });
     };
 
@@ -67,11 +71,29 @@ export default function LinearRegression() {
             .catch(error => {
                 console.error(error);
                 setSuccess(false);
+                setErrorMessage("Selected Dataset is not compatible with the chosen algorithm.");
             });
+
     };
 
     return (
         <div>
+            <Dialog open={errorMessage} onClose={() => {
+                setErrorMessage(null);
+            }}>
+                <DialogTitle>Error</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {errorMessage}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {
+                        setErrorMessage(null);
+                    }}>OK</Button>
+                </DialogActions>
+            </Dialog>
+
             <Grid container spacing={0} sx={{ padding: '10px' }}>
                 <Grid item xs={2}>
                     <Link to="/" className="link-style">
@@ -164,13 +186,14 @@ export default function LinearRegression() {
                                             paper_bgcolor: 'rgba(0,0,0,0)',
                                             font: { color: '#FFFFFF' },
                                             margin: { t: 50 },
-                                            width:'100%',
-                                            height:"100%"
+                                            width: '100%',
+                                            height: "100%"
                                         }}
                                     />
 
 
                                     <ResidualPlot regressionData={regressionData} />
+                                    <MetricsTable metrics={regressionData.metrics} />
                                 </div>
                             </Grid>
 

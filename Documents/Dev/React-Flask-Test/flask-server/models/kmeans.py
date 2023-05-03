@@ -15,7 +15,7 @@ class KMeansCluster:
         max_iters (int): The maximum number of iterations to run the algorithm.
     """
 
-    def __init__(self, K=5, max_iters=100):
+    def __init__(self, K=5, max_iters=300):
         """
         Initialize KMeansCluster with K and max_iters.
 

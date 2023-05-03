@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report
+from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
 from flask_cors import CORS
 import os
@@ -110,7 +111,7 @@ def randomForestTrain(df, target):
     def accuracy(y_test, y_pred):
         return np.sum(y_test == y_pred) / len(y_test)
 
-    clf = RandomForest(num_trees=10, max_tree_depth=1000, min_samples_for_split=6)
+    clf = RandomForest(num_trees=1, max_tree_depth=1000, min_samples_for_split=6)
     clf.fit(X_train, y_train)
     predictions = clf.predict(X_test)
 
@@ -123,7 +124,6 @@ def randomForestTrain(df, target):
     return jsonify({"actual":actual, "predictions": predictions.tolist(), "report": report})
 
 # --------------------------- LOGISTIC REGRESSION ---------------------------#
-
 
 @app.route('/LogisticRegression', methods=['GET', 'POST'])
 def logisticRegression():
@@ -196,7 +196,6 @@ def KNNTrain(df, target):
 
 # --------------------------- KMeans ---------------------------#
 
-
 @app.route('/KMeans', methods=['GET', 'POST'])
 def KMeans():
     if request.method == 'POST':
@@ -212,7 +211,7 @@ def KMeansTrain(df, target):
     n_clusters = len(np.unique(df[target]))
     print(n_clusters)
 
-    k = KMeansCluster(K=n_clusters, max_iters=250)
+    k = KMeansCluster(K=n_clusters, max_iters=5)
     y_pred = k.predict(X)
 
     # Get the centroids of the clusters
@@ -220,9 +219,10 @@ def KMeansTrain(df, target):
     clusters = k.clusters
 
     cluster_points, centroid_points = k.plot()
+    silhouette = silhouette_score(X, y_pred)
 
     # Return the cluster assignments and centroids as a JSON response
-    return jsonify({"clusters": cluster_points, "centroids": centroid_points})
+    return jsonify({"clusters": cluster_points, "centroids": centroid_points, "silhouette":silhouette})
 
 
 
